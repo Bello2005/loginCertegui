@@ -3,7 +3,7 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 
 const StatCard = ({ title, value, percent, color, icon: Icon }) => {
   const isPositive = percent?.startsWith("+");
-  const percentValue = percent?.replace(/[+-%]/g, "");
+  const percentValue = percent?.replace(/[+\-%]/g, "");
 
   return (
     <motion.div

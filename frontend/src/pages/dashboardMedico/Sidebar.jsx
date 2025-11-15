@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { FaTooth, FaSignOutAlt, FaTachometerAlt, UserCircle2 } from "react-icons/fa";
+import { FaTooth, FaSignOutAlt, FaTachometerAlt } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Stethoscope } from "lucide-react";
+import { LayoutDashboard, Stethoscope, UserCircle2 } from "lucide-react";
 
 const Sidebar = () => {
   const user = JSON.parse(localStorage.getItem("user"));
