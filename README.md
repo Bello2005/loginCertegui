@@ -1,486 +1,318 @@
 # 🦷 Ortho&Mas - Sistema de Gestión de Citas Odontológicas
 
-Sistema completo de gestión de citas médicas con autenticación basada en roles (Administrador, Doctor, Paciente). Desarrollado con React (Frontend) y Node.js/Express (Backend).
+<div align="center">
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
+![License](https://img.shields.io/badge/license-Private-red.svg)
+
+**Sistema completo de gestión de citas médicas con autenticación basada en roles**
+
+[Características](#-características-principales) • [Instalación](#-instalación-rápida) • [Documentación](#-documentación-completa) • [Despliegue](#-despliegue)
+
+</div>
+
+---
 
 ## 📋 Tabla de Contenidos
 
-- [Características](#-características)
-- [Tecnologías](#-tecnologías)
-- [Requisitos Previos](#-requisitos-previos)
-- [Instalación](#-instalación)
-- [Desarrollo Local](#-desarrollo-local)
-- [Construcción para Producción](#-construcción-para-producción)
-- [Despliegue](#-despliegue)
-  - [Opción 1: Despliegue en Vercel (Frontend) + Railway/Render (Backend)](#opción-1-despliegue-en-vercel-frontend--railwayrender-backend)
-  - [Opción 2: Despliegue en Netlify (Frontend) + Heroku (Backend)](#opción-2-despliegue-en-netlify-frontend--heroku-backend)
-  - [Opción 3: Despliegue en Servidor Propio (VPS)](#opción-3-despliegue-en-servidor-propio-vps)
-  - [Opción 4: Despliegue con Docker](#opción-4-despliegue-con-docker)
-- [Variables de Entorno](#-variables-de-entorno)
-- [Credenciales de Prueba](#-credenciales-de-prueba)
+- [Descripción](#-descripción)
+- [Características Principales](#-características-principales)
+- [Tecnologías Utilizadas](#-tecnologías-utilizadas)
+- [Requisitos del Sistema](#-requisitos-del-sistema)
+- [Instalación Rápida](#-instalación-rápida)
+- [Instalación Detallada](#-instalación-detallada-paso-a-paso)
+- [Configuración Inicial](#-configuración-inicial)
+- [Ejecución del Proyecto](#-ejecución-del-proyecto)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
+- [API Endpoints](#-api-endpoints)
+- [Credenciales de Prueba](#-credenciales-de-prueba)
 - [Scripts Disponibles](#-scripts-disponibles)
+- [Despliegue](#-despliegue)
 - [Solución de Problemas](#-solución-de-problemas)
+- [Base de Datos](#-base-de-datos)
+- [Contribución](#-contribución)
+- [Licencia](#-licencia)
 
-## ✨ Características
+---
 
-- 🔐 Autenticación basada en roles (Admin, Doctor, Paciente)
-- 📅 Gestión de citas médicas
-- 👥 Dashboard para cada tipo de usuario
-- 📊 Estadísticas y gráficos
-- 🎨 Interfaz moderna con animaciones (Framer Motion)
-- 🌙 Modo oscuro
-- 📱 Diseño responsive
-- ⚡ Desarrollo rápido con Vite
+## 📖 Descripción
 
-## 🛠 Tecnologías
+**Ortho&Mas** es un sistema completo de gestión de citas odontológicas diseñado para facilitar la administración de consultorios dentales. El sistema permite gestionar pacientes, doctores, citas, tratamientos, inventario y más, con una interfaz moderna y fácil de usar.
+
+El sistema está dividido en tres roles principales:
+- **👨‍💼 Administrador**: Control total del sistema, estadísticas, gestión de usuarios y recursos
+- **👨‍⚕️ Doctor**: Gestión de citas, horarios, notas médicas y visualización de tratamientos
+- **👤 Paciente**: Agendar citas, ver historial, consultar servicios y gestionar perfil
+
+---
+
+## ✨ Características Principales
+
+### 🔐 Autenticación y Seguridad
+- ✅ Sistema de autenticación basado en roles (Admin, Doctor, Paciente)
+- ✅ Rutas protegidas con verificación de permisos
+- ✅ Validación de formularios en tiempo real
+- ✅ Manejo seguro de sesiones
+
+### 📅 Gestión de Citas
+- ✅ Agendar, reprogramar y cancelar citas
+- ✅ Calendario interactivo con vista mensual/semanal
+- ✅ Búsqueda de horarios disponibles
+- ✅ Historial completo de citas
+- ✅ Estados de citas (Programada, Completada, Cancelada, Pendiente)
+
+### 📊 Dashboards Especializados
+- ✅ **Dashboard Admin**: Estadísticas, gráficos, gestión completa del sistema
+- ✅ **Dashboard Doctor**: Citas del día, horarios, notas médicas
+- ✅ **Dashboard Paciente**: Próxima cita, agendar nueva, historial
+
+### 🎨 Interfaz de Usuario
+- ✅ Diseño moderno con animaciones (Framer Motion)
+- ✅ Modo oscuro/claro
+- ✅ Diseño completamente responsive
+- ✅ Validación visual en tiempo real
+- ✅ Feedback inmediato con toasts
+
+### 🗄️ Gestión de Datos
+- ✅ CRUD completo para todas las entidades
+- ✅ Paginación en todas las tablas
+- ✅ Filtrado y búsqueda avanzada
+- ✅ Base de datos SQLite con datos de prueba
+
+### 📈 Estadísticas y Reportes
+- ✅ Gráficos de citas por día (barras)
+- ✅ Distribución de estados de citas (pastel)
+- ✅ Métricas con comparación mensual
+- ✅ Tasa de confirmación y pacientes nuevos
+
+---
+
+## 🛠 Tecnologías Utilizadas
 
 ### Frontend
-- **React 19** - Biblioteca de UI
-- **Vite** - Build tool y dev server
-- **React Router** - Enrutamiento
-- **Framer Motion** - Animaciones
-- **Tailwind CSS** - Estilos
-- **Lucide React** - Iconos
-- **Axios** - Cliente HTTP
-- **Recharts** - Gráficos
-- **Moment.js** - Manejo de fechas
-- **Day.js** - Manejo de fechas alternativo
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **React** | 19.2.0 | Biblioteca de UI |
+| **Vite** | 7.2.2 | Build tool y dev server |
+| **React Router** | 7.9.5 | Enrutamiento SPA |
+| **Tailwind CSS** | 3.4.18 | Framework CSS utility-first |
+| **Framer Motion** | 12.23.24 | Animaciones y transiciones |
+| **Axios** | 1.13.2 | Cliente HTTP |
+| **Recharts** | 3.4.1 | Gráficos y visualizaciones |
+| **React Big Calendar** | 1.19.4 | Calendario interactivo |
+| **Day.js** | 1.11.19 | Manejo de fechas |
+| **Lucide React** | 0.553.0 | Iconos modernos |
+| **React Toastify** | 11.0.5 | Notificaciones |
 
 ### Backend
-- **Node.js** - Runtime de JavaScript
-- **Express** - Framework web
-- **CORS** - Manejo de CORS
-- **dotenv** - Variables de entorno
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **Node.js** | >=18.0.0 | Runtime de JavaScript |
+| **Express** | 4.18.2 | Framework web |
+| **better-sqlite3** | 11.7.0 | Base de datos SQLite |
+| **CORS** | 2.8.5 | Manejo de CORS |
+| **dotenv** | 16.3.1 | Variables de entorno |
 
-## 📦 Requisitos Previos
+---
 
-- **Node.js** >= 18.x
-- **npm** >= 9.x (o **yarn** / **pnpm**)
-- **Git** (para clonar el repositorio)
+## 💻 Requisitos del Sistema
 
-## 🚀 Instalación
+### Requisitos Mínimos
+- **Node.js**: >= 18.0.0
+- **npm**: >= 9.0.0 (o yarn/pnpm)
+- **Git**: Para clonar el repositorio
+- **Sistema Operativo**: Windows 10+, macOS 10.15+, Linux (Ubuntu 20.04+)
 
-1. **Clonar el repositorio**
+### Requisitos Recomendados
+- **RAM**: 4GB mínimo, 8GB recomendado
+- **Espacio en disco**: 500MB libres
+- **Navegador**: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+
+### Verificar Instalación
 ```bash
+# Verificar Node.js
+node --version  # Debe mostrar >= 18.0.0
+
+# Verificar npm
+npm --version   # Debe mostrar >= 9.0.0
+
+# Verificar Git
+git --version
+```
+
+---
+
+## 🚀 Instalación Rápida
+
+Para usuarios experimentados que quieren empezar rápido:
+
+```bash
+# 1. Clonar el repositorio
 git clone <url-del-repositorio>
+cd Certegui
+
+# 2. Instalar dependencias del backend
+cd backend && npm install && cd ..
+
+# 3. Instalar dependencias del frontend
+cd frontend && npm install && cd ..
+
+# 4. Iniciar backend (terminal 1)
+cd backend && npm run dev
+
+# 5. Iniciar frontend (terminal 2)
+cd frontend && npm run dev
+
+# 6. Abrir http://localhost:5173 en el navegador
+```
+
+---
+
+## 📝 Instalación Detallada (Paso a Paso)
+
+### Paso 1: Clonar el Repositorio
+
+```bash
+# Clonar el repositorio
+git clone <url-del-repositorio>
+
+# Navegar al directorio del proyecto
 cd Certegui
 ```
 
-2. **Instalar dependencias del Backend**
+### Paso 2: Instalar Dependencias del Backend
+
 ```bash
+# Navegar al directorio backend
 cd backend
+
+# Instalar todas las dependencias
 npm install
+
+# Verificar que se instalaron correctamente
+npm list --depth=0
 ```
 
-3. **Instalar dependencias del Frontend**
+**Dependencias que se instalarán:**
+- `express`: Framework web para Node.js
+- `cors`: Middleware para habilitar CORS
+- `dotenv`: Carga variables de entorno
+- `better-sqlite3`: Driver para SQLite
+
+### Paso 3: Instalar Dependencias del Frontend
+
 ```bash
-cd ../frontend
+# Volver a la raíz del proyecto
+cd ..
+
+# Navegar al directorio frontend
+cd frontend
+
+# Instalar todas las dependencias
 npm install
+
+# Verificar que se instalaron correctamente
+npm list --depth=0
 ```
 
-## 💻 Desarrollo Local
+**Nota:** La instalación puede tardar varios minutos dependiendo de tu conexión a internet.
 
-### Iniciar el Backend
+### Paso 4: Verificar la Estructura
 
-```bash
-cd backend
-npm run dev
+Asegúrate de que tu estructura de directorios se vea así:
+
 ```
-
-El servidor backend estará disponible en `http://localhost:3000`
-
-### Iniciar el Frontend
-
-En una nueva terminal:
-
-```bash
-cd frontend
-npm run dev
-```
-
-El frontend estará disponible en `http://localhost:5173`
-
-### Acceder a la aplicación
-
-Abre tu navegador en `http://localhost:5173` y usa las [credenciales de prueba](#-credenciales-de-prueba).
-
-## 🏗 Construcción para Producción
-
-### Backend
-
-El backend no requiere build, solo asegúrate de tener todas las dependencias instaladas:
-
-```bash
-cd backend
-npm install --production
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm run build
-```
-
-Esto generará una carpeta `dist/` con los archivos optimizados para producción.
-
-Para previsualizar el build:
-
-```bash
-npm run preview
-```
-
-## 🌐 Despliegue
-
-### Opción 1: Despliegue en Vercel (Frontend) + Railway/Render (Backend)
-
-#### Frontend en Vercel
-
-1. **Instalar Vercel CLI** (opcional)
-```bash
-npm i -g vercel
-```
-
-2. **Desplegar desde el directorio frontend**
-```bash
-cd frontend
-vercel
-```
-
-O conecta tu repositorio en [vercel.com](https://vercel.com) y configura:
-- **Framework Preset:** Vite
-- **Root Directory:** `frontend`
-- **Build Command:** `npm run build`
-- **Output Directory:** `dist`
-- **Install Command:** `npm install`
-
-3. **Configurar variables de entorno en Vercel**
-   - `VITE_API_URL`: URL de tu backend desplegado (ej: `https://tu-backend.railway.app`)
-
-#### Backend en Railway
-
-1. **Crear cuenta en [Railway](https://railway.app)**
-
-2. **Nuevo proyecto desde GitHub**
-   - Conecta tu repositorio
-   - Selecciona el directorio `backend`
-
-3. **Configurar variables de entorno**
-   - `PORT`: 3000 (o el puerto que Railway asigne)
-   - `NODE_ENV`: production
-
-4. **Railway detectará automáticamente Node.js y ejecutará `npm start`**
-
-#### Backend en Render
-
-1. **Crear cuenta en [Render](https://render.com)**
-
-2. **Nuevo Web Service**
-   - Conecta tu repositorio
-   - **Root Directory:** `backend`
-   - **Build Command:** `npm install`
-   - **Start Command:** `npm start`
-   - **Environment:** Node
-
-3. **Configurar variables de entorno**
-   - `NODE_ENV`: production
-   - `PORT`: (Render lo asigna automáticamente)
-
-4. **Actualizar CORS en `backend/server.js`**
-```javascript
-app.use(cors({
-  origin: ['https://tu-frontend.vercel.app', 'http://localhost:5173'],
-  credentials: true
-}));
+Certegui/
+├── backend/
+│   ├── node_modules/      ✅ Debe existir
+│   ├── package.json
+│   ├── server.js
+│   ├── database.js
+│   └── .gitignore
+├── frontend/
+│   ├── node_modules/      ✅ Debe existir
+│   ├── package.json
+│   ├── src/
+│   └── vite.config.js
+└── README.md
 ```
 
 ---
 
-### Opción 2: Despliegue en Netlify (Frontend) + Heroku (Backend)
+## ⚙️ Configuración Inicial
 
-#### Frontend en Netlify
+### Configuración del Backend
 
-1. **Crear cuenta en [Netlify](https://netlify.com)**
+El backend no requiere configuración adicional para desarrollo. La base de datos SQLite se crea automáticamente al iniciar el servidor.
 
-2. **Nuevo sitio desde Git**
-   - Conecta tu repositorio
-   - **Base directory:** `frontend`
-   - **Build command:** `npm run build`
-   - **Publish directory:** `frontend/dist`
-
-3. **Configurar variables de entorno**
-   - `VITE_API_URL`: URL de tu backend
-
-4. **Crear archivo `netlify.toml` en `frontend/`**
-```toml
-[build]
-  command = "npm run build"
-  publish = "dist"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-```
-
-#### Backend en Heroku
-
-1. **Instalar Heroku CLI**
-```bash
-npm install -g heroku
-```
-
-2. **Login en Heroku**
-```bash
-heroku login
-```
-
-3. **Crear aplicación**
-```bash
-cd backend
-heroku create tu-app-backend
-```
-
-4. **Configurar variables de entorno**
-```bash
-heroku config:set NODE_ENV=production
-```
-
-5. **Desplegar**
-```bash
-git subtree push --prefix backend heroku main
-```
-
-O conecta tu repositorio desde el dashboard de Heroku.
-
-6. **Actualizar CORS en `backend/server.js`**
-```javascript
-app.use(cors({
-  origin: ['https://tu-frontend.netlify.app', 'http://localhost:5173'],
-  credentials: true
-}));
-```
-
----
-
-### Opción 3: Despliegue en Servidor Propio (VPS)
-
-#### Requisitos del servidor
-- Ubuntu 20.04+ o similar
-- Node.js 18+ instalado
-- Nginx (opcional, para reverse proxy)
-- PM2 para gestión de procesos
-
-#### Pasos de despliegue
-
-1. **Conectar al servidor**
-```bash
-ssh usuario@tu-servidor.com
-```
-
-2. **Clonar el repositorio**
-```bash
-git clone <url-del-repositorio>
-cd Certegui
-```
-
-3. **Configurar Backend**
-
-```bash
-cd backend
-npm install --production
-```
-
-Crear archivo `.env`:
-```env
-PORT=3000
-NODE_ENV=production
-```
-
-Instalar PM2:
-```bash
-npm install -g pm2
-```
-
-Iniciar backend con PM2:
-```bash
-pm2 start server.js --name "certegui-backend"
-pm2 save
-pm2 startup
-```
-
-4. **Configurar Frontend**
-
-```bash
-cd ../frontend
-npm install
-npm run build
-```
-
-5. **Configurar Nginx (Recomendado)**
-
-Crear archivo `/etc/nginx/sites-available/certegui`:
-```nginx
-# Backend API
-server {
-    listen 80;
-    server_name api.tu-dominio.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-
-# Frontend
-server {
-    listen 80;
-    server_name tu-dominio.com;
-
-    root /ruta/a/Certegui/frontend/dist;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
-
-Habilitar sitio:
-```bash
-sudo ln -s /etc/nginx/sites-available/certegui /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
-6. **Configurar SSL con Let's Encrypt (Opcional pero recomendado)**
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d tu-dominio.com -d api.tu-dominio.com
-```
-
----
-
-### Opción 4: Despliegue con Docker
-
-#### Crear Dockerfile para Backend
-
-Crear `backend/Dockerfile`:
-```dockerfile
-FROM node:18-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY . .
-
-EXPOSE 3000
-
-CMD ["node", "server.js"]
-```
-
-#### Crear Dockerfile para Frontend
-
-Crear `frontend/Dockerfile`:
-```dockerfile
-FROM node:18-alpine as build
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
-```
-
-#### Crear docker-compose.yml (raíz del proyecto)
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build: ./backend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-    restart: unless-stopped
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
-```
-
-#### Desplegar con Docker
-
-```bash
-docker-compose up -d
-```
-
-Para actualizar:
-```bash
-docker-compose down
-docker-compose up -d --build
-```
-
----
-
-## 🔧 Variables de Entorno
-
-### Backend (.env)
+**Opcional:** Crear archivo `.env` en `backend/`:
 
 ```env
 PORT=3000
 NODE_ENV=development
 ```
 
-### Frontend (.env)
+### Configuración del Frontend
+
+El frontend está configurado para conectarse a `http://localhost:3000` por defecto.
+
+**Para producción:** Crear archivo `.env` en `frontend/`:
 
 ```env
-VITE_API_URL=http://localhost:3000
+VITE_API_URL=https://tu-backend.com
 ```
-
-Para producción, actualiza `VITE_API_URL` con la URL de tu backend desplegado.
 
 ---
 
-## 🔑 Credenciales de Prueba
+## ▶️ Ejecución del Proyecto
 
-### Administrador
-- **Email:** admin@gmail.com
-- **Password:** 123456
-- **Redirección:** `/admin`
+### Desarrollo Local
 
-### Doctor
-- **Email:** doctor@gmail.com
-- **Password:** 123456
-- **Redirección:** `/medico`
+#### Terminal 1: Iniciar Backend
 
-### Paciente
-- **Email:** paciente@gmail.com
-- **Password:** 123456
-- **Redirección:** `/cliente`
+```bash
+cd backend
+npm run dev
+```
+
+**Salida esperada:**
+```
+✅ Base de datos inicializada correctamente
+📊 Datos de prueba insertados en todas las tablas
+🚀 Servidor corriendo en http://localhost:3000
+```
+
+#### Terminal 2: Iniciar Frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+**Salida esperada:**
+```
+  VITE v7.2.2  ready in 500 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+
+### Acceder a la Aplicación
+
+1. Abre tu navegador en `http://localhost:5173`
+2. Usa las [credenciales de prueba](#-credenciales-de-prueba) para iniciar sesión
+3. Explora los diferentes dashboards según el rol
+
+### Verificar que Todo Funciona
+
+1. **Backend funcionando:**
+   - Visita `http://localhost:3000/health` en tu navegador
+   - Deberías ver: `{"status":"ok","timestamp":"..."}`
+
+2. **Frontend funcionando:**
+   - Deberías ver la página de login en `http://localhost:5173`
+   - No deberías ver errores en la consola del navegador
 
 ---
 
@@ -488,156 +320,431 @@ Para producción, actualiza `VITE_API_URL` con la URL de tu backend desplegado.
 
 ```
 Certegui/
-├── backend/
-│   ├── server.js          # Servidor Express
-│   ├── package.json
-│   └── README.md
-├── frontend/
+├── backend/                          # Servidor Node.js/Express
+│   ├── server.js                    # Servidor principal
+│   ├── database.js                  # Configuración de base de datos
+│   ├── database.sqlite              # Base de datos SQLite (se crea automáticamente)
+│   ├── package.json                  # Dependencias del backend
+│   ├── .gitignore                    # Archivos ignorados por Git
+│   └── README.md                     # Documentación del backend
+│
+├── frontend/                         # Aplicación React
 │   ├── src/
-│   │   ├── pages/         # Componentes de páginas
-│   │   │   ├── dashboardAdmin/
-│   │   │   ├── dashboardMedico/
-│   │   │   ├── dashboardCliente/
-│   │   │   ├── LoginPage.jsx
-│   │   │   └── RegisterPage.jsx
-│   │   ├── services/      # Servicios API
-│   │   ├── context/       # Contextos React
-│   │   └── App.jsx
-│   ├── public/
-│   ├── package.json
-│   └── vite.config.js
-└── README.md
+│   │   ├── components/              # Componentes reutilizables
+│   │   │   ├── CitaModal.jsx        # Modal de detalles de cita
+│   │   │   ├── PerfilModal.jsx      # Modal de edición de perfil
+│   │   │   ├── ProtectedRoute.jsx   # Componente de rutas protegidas
+│   │   │   └── DarkModeToggle.jsx   # Toggle de modo oscuro
+│   │   │
+│   │   ├── pages/                   # Páginas de la aplicación
+│   │   │   ├── LoginPage.jsx        # Página de inicio de sesión
+│   │   │   ├── RegisterPage.jsx     # Página de registro
+│   │   │   │
+│   │   │   ├── dashboardAdmin/      # Dashboard de administrador
+│   │   │   │   ├── DashboardAdmin.jsx
+│   │   │   │   ├── CalendarioCitas.jsx
+│   │   │   │   ├── PacientesDashboard.jsx
+│   │   │   │   ├── DoctorDashboard.jsx
+│   │   │   │   ├── TratamientosDashboard.jsx
+│   │   │   │   └── ... (15+ dashboards)
+│   │   │   │
+│   │   │   ├── dashboardMedico/     # Dashboard de doctor
+│   │   │   │   ├── Dashboard.jsx
+│   │   │   │   ├── NotasView.jsx
+│   │   │   │   ├── HorariosView.jsx
+│   │   │   │   └── ...
+│   │   │   │
+│   │   │   └── dashboardCliente/    # Dashboard de paciente
+│   │   │       ├── DashboardCliente.jsx
+│   │   │       ├── ProximaCita.jsx
+│   │   │       ├── NuevaCita/
+│   │   │       └── ...
+│   │   │
+│   │   ├── services/                # Servicios y utilidades
+│   │   │   └── api.js               # Configuración de Axios
+│   │   │
+│   │   ├── context/                 # Contextos de React
+│   │   │   └── AuthContext.jsx      # Contexto de autenticación
+│   │   │
+│   │   ├── App.jsx                  # Componente raíz
+│   │   ├── Rutas.jsx                # Configuración de rutas
+│   │   ├── main.jsx                 # Punto de entrada
+│   │   └── index.css                # Estilos globales (Tailwind)
+│   │
+│   ├── public/                      # Archivos estáticos
+│   ├── index.html                   # HTML principal
+│   ├── package.json                 # Dependencias del frontend
+│   ├── vite.config.js               # Configuración de Vite
+│   ├── tailwind.config.js           # Configuración de Tailwind
+│   ├── postcss.config.js            # Configuración de PostCSS
+│   └── README.md                    # Documentación del frontend
+│
+└── README.md                        # Este archivo
 ```
+
+---
+
+## 🔌 API Endpoints
+
+### Autenticación
+
+| Método | Endpoint | Descripción | Autenticación |
+|--------|----------|-------------|---------------|
+| `POST` | `/login` | Iniciar sesión | No |
+| `POST` | `/register` | Registrar nuevo usuario | No |
+| `GET` | `/api/usuario/me` | Obtener usuario actual | Sí |
+| `PUT` | `/api/usuario/me` | Actualizar perfil | Sí |
+
+### Citas
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/citas` | Listar todas las citas (con filtros) |
+| `GET` | `/api/citas/:id` | Obtener cita por ID |
+| `GET` | `/api/citas/proximas` | Próximas citas (admin) |
+| `GET` | `/api/citas/proxima` | Próxima cita del paciente |
+| `GET` | `/api/citas/historial` | Historial de citas del paciente |
+| `GET` | `/api/citas/calendario` | Citas para calendario |
+| `GET` | `/api/citas/doctor/:doctorId` | Citas de un doctor |
+| `GET` | `/api/citas/horas-disponibles` | Horas disponibles de un doctor |
+| `POST` | `/api/citas` | Crear nueva cita |
+| `PUT` | `/api/citas/:id/estado` | Actualizar estado de cita |
+| `DELETE` | `/api/citas/:id` | Eliminar cita |
+
+### Pacientes
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/pacientes` | Listar pacientes (paginado) |
+| `POST` | `/api/pacientes` | Crear nuevo paciente |
+
+### Doctores
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/doctores` | Listar doctores (paginado) |
+| `GET` | `/api/doctores/especialistas` | Listar doctores con especialidades |
+| `GET` | `/api/doctores/me` | Obtener doctor_id desde usuario_id |
+| `POST` | `/api/doctores` | Crear nuevo doctor |
+| `PUT` | `/api/doctores/:id` | Actualizar doctor |
+| `DELETE` | `/api/doctores/:id` | Eliminar doctor |
+
+### Administración
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/admin/estadisticas` | Estadísticas del dashboard |
+| `GET` | `/api/admin/citas-por-dia` | Citas por día de la semana |
+| `GET` | `/api/admin/estado-citas` | Distribución de estados de citas |
+
+### Otros Endpoints
+
+Todos los recursos (tratamientos, procedimientos, materiales, equipos, proveedores, inventario, servicios, especialidades, horarios, notas) tienen endpoints CRUD estándar:
+
+- `GET /api/{recurso}` - Listar (con paginación)
+- `POST /api/{recurso}` - Crear
+- `PUT /api/{recurso}/:id` - Actualizar
+- `DELETE /api/{recurso}/:id` - Eliminar
+
+**Nota:** Todos los endpoints de `/api/*` requieren autenticación (excepto login y register).
+
+---
+
+## 🔑 Credenciales de Prueba
+
+El sistema viene con usuarios de prueba pre-configurados:
+
+### 👨‍💼 Administrador
+```
+Email: admin@gmail.com
+Password: 123456
+Redirección: /admin
+```
+
+**Permisos:**
+- Acceso completo al sistema
+- Gestión de usuarios, doctores y pacientes
+- Estadísticas y reportes
+- Configuración del sistema
+
+### 👨‍⚕️ Doctor
+```
+Email: doctor@gmail.com
+Password: 123456
+Redirección: /medico
+```
+
+**Permisos:**
+- Ver y gestionar sus propias citas
+- Gestionar horarios
+- Crear y editar notas médicas
+- Ver tratamientos y procedimientos
+
+### 👤 Paciente
+```
+Email: paciente@gmail.com
+Password: 123456
+Redirección: /cliente
+```
+
+**Permisos:**
+- Agendar nuevas citas
+- Ver próxima cita
+- Ver historial de citas
+- Gestionar perfil personal
+- Ver servicios, tratamientos y especialidades
 
 ---
 
 ## 📜 Scripts Disponibles
 
 ### Backend
-- `npm start` - Inicia el servidor en modo producción
-- `npm run dev` - Inicia el servidor en modo desarrollo con auto-reload
+
+```bash
+# Desarrollo (con auto-reload)
+npm run dev
+
+# Producción
+npm start
+```
 
 ### Frontend
-- `npm run dev` - Inicia el servidor de desarrollo
-- `npm run build` - Construye la aplicación para producción
-- `npm run preview` - Previsualiza el build de producción
-- `npm run lint` - Ejecuta el linter
+
+```bash
+# Desarrollo
+npm run dev
+
+# Construir para producción
+npm run build
+
+# Previsualizar build de producción
+npm run preview
+
+# Linter
+npm run lint
+```
+
+---
+
+## 🌐 Despliegue
+
+### Opción 1: Vercel (Frontend) + Railway (Backend)
+
+#### Frontend en Vercel
+
+1. Conecta tu repositorio en [vercel.com](https://vercel.com)
+2. Configura:
+   - **Framework Preset:** Vite
+   - **Root Directory:** `frontend`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. Variables de entorno:
+   - `VITE_API_URL`: URL de tu backend
+
+#### Backend en Railway
+
+1. Conecta tu repositorio en [railway.app](https://railway.app)
+2. Selecciona directorio `backend`
+3. Railway detectará Node.js automáticamente
+4. Variables de entorno:
+   - `NODE_ENV`: production
+   - `PORT`: (asignado automáticamente)
+
+### Opción 2: Netlify (Frontend) + Render (Backend)
+
+#### Frontend en Netlify
+
+1. Conecta tu repositorio en [netlify.com](https://netlify.com)
+2. Configura:
+   - **Base directory:** `frontend`
+   - **Build command:** `npm run build`
+   - **Publish directory:** `frontend/dist`
+
+#### Backend en Render
+
+1. Crea un nuevo Web Service en [render.com](https://render.com)
+2. Configura:
+   - **Root Directory:** `backend`
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+
+### Opción 3: Servidor Propio (VPS)
+
+Ver guía completa en la sección de despliegue del README original.
 
 ---
 
 ## 🐛 Solución de Problemas
 
-### Error: "vite" no se reconoce como comando interno
-**Solución:** Usa `npx vite` o `npm run dev` en lugar de ejecutar `vite` directamente.
+### Error: "Cannot find module"
 
-```bash
-# ❌ Incorrecto
-vite
-
-# ✅ Correcto
-npm run dev
-# o
-npx vite
-```
-
-### Error: Dependencias faltantes (moment, etc.)
-Si ves errores como "The following dependencies are imported but could not be resolved", ejecuta:
-
-```bash
-cd frontend
-npm install
-```
-
-Esto instalará todas las dependencias faltantes, incluyendo `moment` que es requerido por `react-big-calendar`.
-
-### Error: Puerto en uso
-```bash
-# Linux/Mac
-fuser -k 3000/tcp
-# o
-killall node
-
-# Windows
-netstat -ano | findstr :3000
-taskkill /PID <PID> /F
-```
-
-### Error: Módulos no encontrados
+**Solución:**
 ```bash
 # Eliminar node_modules y reinstalar
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Error CORS en producción
-Asegúrate de actualizar la configuración CORS en `backend/server.js` con las URLs correctas de tu frontend desplegado.
+### Error: Puerto 3000 o 5173 en uso
 
-### Error 404 en rutas del frontend
-Configura tu servidor web (Nginx, Apache, etc.) para redirigir todas las rutas a `index.html` (SPA routing).
-
-### Error: Failed to run dependency scan
-Si ves este error al iniciar el servidor de desarrollo, asegúrate de que todas las dependencias estén instaladas:
-
+**Solución:**
 ```bash
+# Linux/Mac
+lsof -ti:3000 | xargs kill -9
+lsof -ti:5173 | xargs kill -9
+
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
+```
+
+### Error: Base de datos no se crea
+
+**Solución:**
+```bash
+# Verificar permisos de escritura
+cd backend
+ls -la database.sqlite
+
+# Si no existe, el servidor la creará automáticamente
+npm run dev
+```
+
+### Error: CORS en producción
+
+**Solución:** Actualizar CORS en `backend/server.js`:
+```javascript
+app.use(cors({
+  origin: ['https://tu-frontend.com', 'http://localhost:5173'],
+  credentials: true
+}));
+```
+
+### Error: Rutas no funcionan en producción
+
+**Solución:** Configurar redirección en servidor web (Nginx/Apache):
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+### Error: Dependencias faltantes
+
+**Solución:**
+```bash
+# Frontend
 cd frontend
 npm install
-```
 
-Si el problema persiste, elimina `node_modules` y `package-lock.json` y reinstala:
-
-```bash
-rm -rf node_modules package-lock.json
+# Backend
+cd backend
 npm install
 ```
 
-### Error: Optimización de esbuild
-Si ves errores relacionados con esbuild durante el build o desarrollo:
+### Error: Vite optimization
 
-1. **Limpiar caché de Vite:**
+**Solución:**
 ```bash
 cd frontend
 rm -rf node_modules/.vite
 npm run dev
 ```
 
-2. **Si el problema persiste, reinstalar dependencias:**
-```bash
-cd frontend
-rm -rf node_modules package-lock.json node_modules/.vite
-npm install
-npm run dev
-```
+---
 
-3. **Para problemas de memoria con esbuild (builds grandes):**
-```bash
-# Aumentar memoria de Node.js (si es necesario)
-export NODE_OPTIONS="--max-old-space-size=4096"
-npm run build
-```
+## 🗄️ Base de Datos
 
-La configuración de Vite ya está optimizada para manejar dependencias grandes como `moment` y `react-big-calendar`.
+### SQLite
+
+El proyecto utiliza **SQLite** con `better-sqlite3` como driver. La base de datos se crea automáticamente al iniciar el servidor.
+
+### Estructura de Tablas
+
+- `roles` - Roles del sistema (admin, doctor, paciente)
+- `usuarios` - Usuarios del sistema
+- `doctores` - Información de doctores
+- `citas` - Citas médicas
+- `tratamientos` - Tratamientos disponibles
+- `procedimientos` - Procedimientos médicos
+- `materiales` - Materiales del consultorio
+- `equipos` - Equipos médicos
+- `proveedores` - Proveedores
+- `inventario` - Inventario
+- `servicios` - Servicios ofrecidos
+- `especialidades` - Especialidades médicas
+- `horarios` - Horarios de doctores
+- `notas` - Notas médicas
+
+### Datos de Prueba
+
+La base de datos se inicializa automáticamente con:
+- 3 usuarios de prueba (admin, doctor, paciente)
+- Múltiples doctores, pacientes y citas
+- Datos de ejemplo para todas las tablas
+
+### Backup de Base de Datos
+
+```bash
+# Copiar base de datos
+cp backend/database.sqlite backend/database.sqlite.backup
+
+# Restaurar
+cp backend/database.sqlite.backup backend/database.sqlite
+```
 
 ---
 
-## 📝 Notas Adicionales
+## 🤝 Contribución
 
-- El backend actualmente usa datos de prueba en memoria. Para producción, deberás implementar una base de datos (PostgreSQL, MongoDB, etc.).
-- Algunos endpoints del frontend están comentados con `TODO` para futura implementación en el backend.
-- El sistema está optimizado para desarrollo y producción.
+Este es un proyecto privado. Para contribuir:
+
+1. Fork el repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto es privado y de uso interno.
+Este proyecto es **privado** y de uso interno. Todos los derechos reservados.
 
 ---
 
-## 👥 Contribuidores
+## 📞 Soporte
 
-- Equipo de desarrollo Ortho&Mas
+¿Necesitas ayuda?
+
+- 📧 Email: [tu-email@ejemplo.com]
+- 🐛 Issues: [GitHub Issues]
+- 📖 Documentación: Este README
 
 ---
 
-**¿Necesitas ayuda?** Abre un issue en el repositorio o contacta al equipo de desarrollo.
+## 🎯 Estado del Proyecto
 
+✅ **Completado:**
+- Sistema de autenticación
+- Dashboards por rol
+- CRUD completo
+- Base de datos funcional
+- UI/UX moderna
+- Modo oscuro
+- Paginación
+- Estadísticas
+
+🔄 **En desarrollo:**
+- Mejoras de rendimiento
+- Nuevas funcionalidades según feedback
+
+---
+
+<div align="center">
+
+**Desarrollado con ❤️ para Ortho&Mas**
+
+⭐ Si te gusta este proyecto, dale una estrella en GitHub
+
+</div>
