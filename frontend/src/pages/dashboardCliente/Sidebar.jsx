@@ -1,7 +1,9 @@
 // src/components/Sidebar.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { api } from "../../services/api";
+import PerfilModal from "../../components/PerfilModal";
 import {
   Home,
   CalendarPlus,
@@ -11,18 +13,58 @@ import {
   Sparkles,
   UserCircle2,
   Stethoscope,
+  GraduationCap,
 } from "lucide-react";
 
 const navItems = [
   { icon: Home, text: "Inicio", link: "/cliente" },
   { icon: CalendarPlus, text: "Agendar Cita", link: "/cliente/nueva-cita" },
+  { icon: Sparkles, text: "Servicios", link: "/cliente/servicios" },
+  { icon: Stethoscope, text: "Tratamientos", link: "/cliente/tratamientos" },
+  { icon: GraduationCap, text: "Especialidades", link: "/cliente/especialidades" },
   { icon: User, text: "Mi Perfil", link: "/perfil" },
 ];
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser?.id) {
+          try {
+            const res = await api.get(`api/usuario/me?usuario_id=${storedUser.id}`);
+            if (res.data && res.data.id) {
+              setUser(res.data);
+              localStorage.setItem("user", JSON.stringify(res.data));
+            } else {
+              setUser(storedUser);
+            }
+          } catch (apiError) {
+            // Si el endpoint falla (404, 500, etc.), usar el usuario almacenado
+            // Solo loguear errores que no sean 404 para evitar spam en consola
+            if (apiError.response?.status !== 404) {
+              console.error("Error obteniendo usuario:", apiError);
+            }
+            setUser(storedUser);
+          }
+        } else {
+          setUser(storedUser);
+        }
+      } catch (error) {
+        console.error("Error parseando usuario:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -57,7 +99,7 @@ const Sidebar = () => {
         </motion.div>
 
         {/* Información del usuario */}
-        {user && (
+        {!loading && user && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -69,9 +111,16 @@ const Sidebar = () => {
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                  {user.nombre} {user.apellido}
-                </p>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setModalOpen(true)}
+                  className="text-left w-full"
+                >
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer">
+                    {user.nombre} {user.apellido}
+                  </p>
+                </motion.button>
                 <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">
                   {user.rol?.nombre || "Paciente"}
                 </p>
@@ -140,6 +189,17 @@ const Sidebar = () => {
           </p>
         </button>
       </motion.div>
+
+      {/* Modal de Perfil */}
+      <PerfilModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        user={user}
+        onUpdate={(updatedUser) => {
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }}
+      />
     </aside>
   );
 };

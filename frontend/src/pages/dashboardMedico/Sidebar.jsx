@@ -1,15 +1,58 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaTooth, FaSignOutAlt, FaTachometerAlt } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Stethoscope, UserCircle2 } from "lucide-react";
+import { LayoutDashboard, Stethoscope, UserCircle2, FileText, Clock, Heart, ClipboardList } from "lucide-react";
+import { api } from "../../services/api";
+import PerfilModal from "../../components/PerfilModal";
 
 const Sidebar = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser?.id) {
+          try {
+            const res = await api.get(`api/usuario/me?usuario_id=${storedUser.id}`);
+            if (res.data) {
+              setUser(res.data);
+              localStorage.setItem("user", JSON.stringify(res.data));
+            } else {
+              setUser(storedUser);
+            }
+          } catch (apiError) {
+            // Si el endpoint falla, usar el usuario almacenado
+            // No mostrar errores 404 (son silenciosos) ni errores marcados como silenciosos
+            if (!apiError.silent && apiError.response?.status !== 404) {
+              console.error("Error obteniendo usuario:", apiError);
+            }
+            setUser(storedUser);
+          }
+        } else {
+          setUser(storedUser);
+        }
+      } catch (error) {
+        console.error("Error parseando usuario:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/medico" },
+    { icon: FileText, label: "Notas", path: "/medico/notas" },
+    { icon: Clock, label: "Horarios", path: "/medico/horarios" },
+    { icon: Heart, label: "Tratamientos", path: "/medico/tratamientos" },
+    { icon: ClipboardList, label: "Procedimientos", path: "/medico/procedimientos" },
   ];
 
   const handleLogout = () => {
@@ -48,18 +91,27 @@ const Sidebar = () => {
           animate={{ opacity: 1, x: 0 }}
           className="flex flex-col gap-6 mt-6"
         >
-          <div className="flex gap-3 items-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200/50 dark:border-indigo-700/50 shadow-md">
-            <div className="relative">
-              <UserCircle2 className="w-12 h-12 text-indigo-600 dark:text-indigo-400" />
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+          {!loading && user && (
+            <div className="flex gap-3 items-center p-4 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 border border-indigo-200/50 dark:border-indigo-700/50 shadow-md">
+              <div className="relative">
+                <UserCircle2 className="w-12 h-12 text-indigo-600 dark:text-indigo-400" />
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setModalOpen(true)}
+                  className="text-left w-full"
+                >
+                  <h2 className="text-gray-900 dark:text-white font-semibold text-sm truncate hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer">
+                    {user?.rol?.nombre === "doctor" ? "Dr. " : ""}{user?.nombre || "Nombre"} {user?.apellido || "Apellido"}
+                  </h2>
+                </motion.button>
+                <p className="text-gray-500 dark:text-gray-300 text-xs capitalize">{user?.rol?.nombre || "Rol"}</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h2 className="text-gray-900 dark:text-white font-semibold text-sm truncate">
-                {user?.rol?.nombre === "doctor" ? "Dr. " : ""}{user?.nombre || "Nombre"} {user?.apellido || "Apellido"}
-              </h2>
-              <p className="text-gray-500 dark:text-gray-300 text-xs capitalize">{user?.rol?.nombre || "Rol"}</p>
-            </div>
-          </div>
+          )}
 
           {/* Menú */}
           <nav className="flex flex-col gap-2 mt-4">
@@ -104,6 +156,17 @@ const Sidebar = () => {
           <span className="text-sm">Cerrar Sesión</span>
         </button>
       </motion.div>
+
+      {/* Modal de Perfil */}
+      <PerfilModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        user={user}
+        onUpdate={(updatedUser) => {
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }}
+      />
     </aside>
   );
 };

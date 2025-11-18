@@ -43,6 +43,8 @@ Sistema completo de gestión de citas médicas con autenticación basada en role
 - **Lucide React** - Iconos
 - **Axios** - Cliente HTTP
 - **Recharts** - Gráficos
+- **Moment.js** - Manejo de fechas
+- **Day.js** - Manejo de fechas alternativo
 
 ### Backend
 - **Node.js** - Runtime de JavaScript
@@ -525,6 +527,29 @@ Certegui/
 
 ## 🐛 Solución de Problemas
 
+### Error: "vite" no se reconoce como comando interno
+**Solución:** Usa `npx vite` o `npm run dev` en lugar de ejecutar `vite` directamente.
+
+```bash
+# ❌ Incorrecto
+vite
+
+# ✅ Correcto
+npm run dev
+# o
+npx vite
+```
+
+### Error: Dependencias faltantes (moment, etc.)
+Si ves errores como "The following dependencies are imported but could not be resolved", ejecuta:
+
+```bash
+cd frontend
+npm install
+```
+
+Esto instalará todas las dependencias faltantes, incluyendo `moment` que es requerido por `react-big-calendar`.
+
 ### Error: Puerto en uso
 ```bash
 # Linux/Mac
@@ -549,6 +574,48 @@ Asegúrate de actualizar la configuración CORS en `backend/server.js` con las U
 
 ### Error 404 en rutas del frontend
 Configura tu servidor web (Nginx, Apache, etc.) para redirigir todas las rutas a `index.html` (SPA routing).
+
+### Error: Failed to run dependency scan
+Si ves este error al iniciar el servidor de desarrollo, asegúrate de que todas las dependencias estén instaladas:
+
+```bash
+cd frontend
+npm install
+```
+
+Si el problema persiste, elimina `node_modules` y `package-lock.json` y reinstala:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Error: Optimización de esbuild
+Si ves errores relacionados con esbuild durante el build o desarrollo:
+
+1. **Limpiar caché de Vite:**
+```bash
+cd frontend
+rm -rf node_modules/.vite
+npm run dev
+```
+
+2. **Si el problema persiste, reinstalar dependencias:**
+```bash
+cd frontend
+rm -rf node_modules package-lock.json node_modules/.vite
+npm install
+npm run dev
+```
+
+3. **Para problemas de memoria con esbuild (builds grandes):**
+```bash
+# Aumentar memoria de Node.js (si es necesario)
+export NODE_OPTIONS="--max-old-space-size=4096"
+npm run build
+```
+
+La configuración de Vite ya está optimizada para manejar dependencias grandes como `moment` y `react-big-calendar`.
 
 ---
 

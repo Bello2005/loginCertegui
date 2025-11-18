@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { TriangleAlert, Clock } from "lucide-react";
+import { api } from "../../../services/api";
 
 const HorasDisponibles = ({ fechaSeleccionada, selectedEspecialista, horaSeleccionada, setHoraSeleccionada }) => {
   const [availableHours, setAvailableHours] = useState([]);
@@ -9,32 +10,48 @@ const HorasDisponibles = ({ fechaSeleccionada, selectedEspecialista, horaSelecci
 
   // cuando cambia la fecha o el especialista, cargamos las horas
   useEffect(() => {
-    const fetchHoras = () => {
+    const fetchHoras = async () => {
+      if (!fechaSeleccionada || !selectedEspecialista) {
+        setAvailableHours([]);
+        return;
+      }
+
       setError(null);
       setLoading(true);
 
-      // simulamos datos estáticos (puedes reemplazar con axios si tu backend está listo)
-      const horas = [
-        { hora: "09:00 AM", value: "09:00", disponible: true },
-        { hora: "09:30 AM", value: "09:30", disponible: true },
-        { hora: "10:00 AM", value: "10:00", disponible: true },
-        { hora: "10:30 AM", value: "10:30", disponible: true },
-        { hora: "11:00 AM", value: "11:00", disponible: true },
-        { hora: "11:30 AM", value: "11:30", disponible: true },
-        { hora: "02:00 PM", value: "14:00", disponible: true },
-        { hora: "02:30 PM", value: "14:30", disponible: true },
-        { hora: "03:00 PM", value: "15:00", disponible: true },
-        { hora: "03:30 PM", value: "15:30", disponible: true },
-        { hora: "04:00 PM", value: "16:00", disponible: true }
-      ];
+      try {
+        const fecha = fechaSeleccionada.format("YYYY-MM-DD");
+        const res = await api.get(`api/citas/horas-disponibles?doctorId=${selectedEspecialista.id}&fecha=${fecha}`);
+        
+        // Convertir horas del backend (formato "09:00") a formato de visualización
+        const horas = res.data.horas.map(hora => {
+          const [h, m] = hora.split(':');
+          const hora24 = parseInt(h);
+          const minutos = parseInt(m);
+          const hora12 = hora24 > 12 ? hora24 - 12 : hora24;
+          const ampm = hora24 >= 12 ? 'PM' : 'AM';
+          const horaFormato = minutos > 0 
+            ? `${hora12}:${minutos.toString().padStart(2, '0')} ${ampm}`
+            : `${hora12}:00 ${ampm}`;
+          
+          return {
+            hora: horaFormato,
+            value: hora,
+            disponible: true
+          };
+        });
 
-      setAvailableHours(horas);
-      setLoading(false);
+        setAvailableHours(horas);
+      } catch (err) {
+        console.error("Error cargando horas disponibles:", err);
+        setError("Error al cargar horas disponibles");
+        setAvailableHours([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (fechaSeleccionada && selectedEspecialista) {
-      fetchHoras();
-    }
+    fetchHoras();
   }, [fechaSeleccionada, selectedEspecialista]);
 
   if (!fechaSeleccionada || !selectedEspecialista) {
@@ -60,7 +77,7 @@ const HorasDisponibles = ({ fechaSeleccionada, selectedEspecialista, horaSelecci
       className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200/50 dark:border-slate-700/50 transition-all hover:shadow-xl"
     >
       <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-        <Clock className="w-5 h-5 text-indigo-600" />
+        <Clock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
         4. Seleccione Horario
         <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
           ({fechaSeleccionada.format("ddd, D MMM")})

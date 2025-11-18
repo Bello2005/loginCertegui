@@ -28,10 +28,8 @@ const ProximaCita = () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user) return;
 
-        // TODO: Actualizar endpoint al nuevo backend Node.js (ej: /api/citas/proxima?usuario_id=${user.id})
-        // const { data } = await api.get(`/Cita.php?usuario_id=${user.id}`);
-        // Temporalmente usando datos mock
-        setCita(null);
+        const { data } = await api.get(`api/citas/proxima?usuario_id=${user.id}`);
+        setCita(data);
       } catch (error) {
         console.error("Error al cargar la cita", error);
       }
@@ -66,11 +64,25 @@ const ProximaCita = () => {
     );
   }
 
-  const nextAppointmentDate = dayjs(cita.fecha_hora);
+  // Manejar el formato de fecha_hora del backend
+  let nextAppointmentDate;
+  if (cita.fecha_hora) {
+    // El backend devuelve fecha_hora como "YYYY-MM-DDTHH:mm"
+    nextAppointmentDate = dayjs(cita.fecha_hora);
+  } else if (cita.fecha && cita.hora) {
+    // Fallback: combinar fecha y hora si vienen separados
+    nextAppointmentDate = dayjs(`${cita.fecha}T${cita.hora}`);
+  } else {
+    nextAppointmentDate = dayjs();
+  }
   const timeUntil = nextAppointmentDate.fromNow();
 
   // Abrir y cerrar modal
-  const openModal = (type) => {
+  const openModal = (type, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setModalType(type);
     setModalIsOpen(true);
     if (type === "detalles") {
@@ -78,7 +90,11 @@ const ProximaCita = () => {
     }
   };
 
-  const closeModal = () => {
+  const closeModal = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setModalIsOpen(false);
     setDetalle(null);
     setNuevaFecha("");
@@ -88,32 +104,108 @@ const ProximaCita = () => {
   // Ver detalles
   const fetchDetalles = async (id) => {
     try {
-      // TODO: Actualizar endpoint al nuevo backend Node.js (ej: /api/citas/${id})
-      // const { data } = await api.get(`/DetalleCita.php?cita_id=${id}`);
-      // Temporalmente usando datos mock
-      setDetalle(null);
-    } catch {
+      const { data } = await api.get(`api/citas/${id}`);
+      if (data && data.success && data.data) {
+        const cita = data.data;
+        setDetalle({
+          servicio: cita.nota || 'Consulta',
+          doctor: cita.doctor?.nombre_completo || `${cita.doctor?.nombre || ''} ${cita.doctor?.apellido || ''}`.trim() || 'Doctor',
+          fecha: cita.fecha,
+          hora: cita.hora
+        });
+      } else if (data && data.fecha) {
+        // Fallback para formato antiguo
+        setDetalle({
+          servicio: data.nota || data.servicio || 'Consulta',
+          doctor: data.doctor_nombre || 'Doctor',
+          fecha: data.fecha,
+          hora: data.hora
+        });
+      }
+    } catch (err) {
+      console.error(err);
       alert("Error al cargar los detalles.");
     }
   };
 
   // Reprogramar cita
-  const handleReprogramar = async () => {
+  const handleReprogramar = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!nuevaFecha || !nuevaHora) {
       alert("Por favor completa la nueva fecha y hora");
       return;
     }
-    // TODO: Implementar cuando el endpoint esté disponible
-    alert("Funcionalidad pendiente de implementar en el backend");
-    closeModal();
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user || !user.id) {
+        alert("Error: Usuario no encontrado");
+        return;
+      }
+
+      const doctorId = cita.doctor_id;
+      if (!doctorId) {
+        alert("Error: No se pudo obtener el ID del doctor");
+        return;
+      }
+
+      // Primero eliminar la cita antigua
+      await api.delete(`api/citas/${cita.id}`);
+      
+      // Crear una nueva cita con la nueva fecha y hora
+      const response = await api.post("api/citas", {
+        pacienteId: user.id,
+        doctorId: doctorId,
+        fecha: nuevaFecha,
+        hora: nuevaHora,
+        nota: cita.descripcion || cita.servicio || ""
+      });
+
+      if (response.data && response.data.success) {
+        alert("Cita reprogramada exitosamente");
+        setCita(null);
+        closeModal();
+        // Recargar la próxima cita
+        const { data } = await api.get(`api/citas/proxima?usuario_id=${user.id}`);
+        setCita(data);
+      } else {
+        alert("Error al reprogramar la cita");
+      }
+    } catch (err) {
+      console.error("Error al reprogramar la cita:", err);
+      const errorMessage = err.response?.data?.message || err.message || "Error desconocido";
+      alert("Error al reprogramar la cita: " + errorMessage);
+    }
   };
 
   // Cancelar cita
-  const handleCancelar = async () => {
-    // TODO: Implementar cuando el endpoint esté disponible
-    alert("Funcionalidad pendiente de implementar en el backend");
-    setCita(null);
-    closeModal();
+  const handleCancelar = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    try {
+      const response = await api.put(`api/citas/${cita.id}/estado`, { estado: 'Cancelada' });
+      if (response.data && (response.data.success || response.status === 200)) {
+        alert("Cita cancelada exitosamente");
+        setCita(null);
+        closeModal();
+        // Recargar para actualizar el estado
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user && user.id) {
+          const { data } = await api.get(`api/citas/proxima?usuario_id=${user.id}`);
+          setCita(data);
+        }
+      } else {
+        alert("Error al cancelar la cita");
+      }
+    } catch (err) {
+      console.error("Error al cancelar la cita:", err);
+      const errorMessage = err.response?.data?.message || err.message || "Error desconocido";
+      alert("Error al cancelar la cita: " + errorMessage);
+    }
   };
 
   return (
@@ -168,27 +260,30 @@ const ProximaCita = () => {
           {/* Botones de acción */}
           <div className="mt-4 flex gap-3 flex-wrap">
             <motion.button
+              type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => openModal("detalles")}
+              onClick={(e) => openModal("detalles", e)}
               className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md"
             >
               <Eye className="w-4 h-4" />
               Ver Detalles
             </motion.button>
             <motion.button
+              type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => openModal("reprogramar")}
+              onClick={(e) => openModal("reprogramar", e)}
               className="flex items-center gap-2 px-4 py-2 border-2 border-indigo-600 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all"
             >
               <RefreshCw className="w-4 h-4" />
               Reprogramar
             </motion.button>
             <motion.button
+              type="button"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => openModal("cancelar")}
+              onClick={(e) => openModal("cancelar", e)}
               className="flex items-center gap-2 px-4 py-2 border-2 border-red-600 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-all"
             >
               <X className="w-4 h-4" />
@@ -206,8 +301,9 @@ const ProximaCita = () => {
         overlayClassName="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-start z-50"
       >
         <motion.button
+          type="button"
           whileHover={{ scale: 1.1, rotate: 90 }}
-          onClick={closeModal}
+          onClick={(e) => closeModal(e)}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 transition-colors p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
         >
           <X className="w-5 h-5" />
@@ -225,24 +321,24 @@ const ProximaCita = () => {
             </h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-indigo-600" />
+                <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Servicio</p>
-                  <p className="font-semibold">{detalle.servicio}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Servicio</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{detalle.servicio}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-indigo-600" />
+                <User className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Doctor</p>
-                  <p className="font-semibold">{detalle.doctor}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Doctor</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{detalle.doctor}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-indigo-600" />
+                <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 <div>
-                  <p className="text-sm text-gray-500">Fecha y Hora</p>
-                  <p className="font-semibold">{detalle.fecha} - {detalle.hora}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Fecha y Hora</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{detalle.fecha} - {detalle.hora}</p>
                 </div>
               </div>
             </div>
@@ -261,27 +357,28 @@ const ProximaCita = () => {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold mb-2">Nueva Fecha</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Nueva Fecha</label>
                 <input
                   type="date"
                   value={nuevaFecha}
                   onChange={(e) => setNuevaFecha(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2">Nueva Hora</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">Nueva Hora</label>
                 <input
                   type="time"
                   value={nuevaHora}
                   onChange={(e) => setNuevaHora(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all"
+                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all"
                 />
               </div>
               <motion.button
+                type="button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={handleReprogramar}
+                onClick={(e) => handleReprogramar(e)}
                 className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md"
               >
                 Guardar Cambios
@@ -305,17 +402,19 @@ const ProximaCita = () => {
             </p>
             <div className="flex justify-end gap-3 mt-6">
               <motion.button
+                type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={closeModal}
+                onClick={(e) => closeModal(e)}
                 className="px-6 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
               >
                 No
               </motion.button>
               <motion.button
+                type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleCancelar}
+                onClick={(e) => handleCancelar(e)}
                 className="px-6 py-2 bg-gradient-to-r from-red-600 to-rose-600 text-white rounded-xl hover:from-red-700 hover:to-rose-700 transition-all shadow-md"
               >
                 Sí, cancelar

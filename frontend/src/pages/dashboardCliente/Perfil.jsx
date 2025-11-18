@@ -22,8 +22,8 @@ const Perfil = () => {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <p className="text-gray-600 text-lg font-medium">
+      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+        <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
           No hay usuario autenticado.
         </p>
       </div>

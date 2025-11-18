@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Bell, Sparkles } from "lucide-react";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
+import DarkModeToggle from "../../components/DarkModeToggle";
 
 dayjs.locale("es");
 
@@ -55,6 +56,9 @@ const Header = () => {
           <Bell className="text-xl" />
           <span className="absolute top-2 right-2 h-3 w-3 bg-red-600 rounded-full animate-pulse border-2 border-white dark:border-gray-900"></span>
         </motion.button>
+        
+        {/* Toggle de Modo Oscuro */}
+        <DarkModeToggle />
       </div>
     </motion.header>
   );

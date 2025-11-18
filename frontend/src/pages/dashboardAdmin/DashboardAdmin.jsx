@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 import Sidebar from "./Sidebar";
 import HeaderDashboard from "./HeaderDashboard";
 import StatCard from "./StatCard";
@@ -12,22 +14,44 @@ import { api } from "../../services/api";
 
 const DashboardAdmin = () => {
   const [stats, setStats] = useState(null);
+  const navigate = useNavigate();
 
-  // TODO: Actualizar endpoint al nuevo backend Node.js
   useEffect(() => {
-    // Temporalmente usando datos mock hasta que se implemente el endpoint
-    setStats({
-      citas_hoy: 12,
-      ingresos_mes: 45000,
-      pacientes_nuevos: 28,
-      tasa_confirmacion: 87
-    });
+    // Verificar que el usuario sea admin
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userRole = user?.rol?.nombre?.toLowerCase();
     
-    // TODO: Reemplazar con endpoint del nuevo backend (ej: /api/admin/estadisticas)
-    // api
-    //   .get("admin.php")
-    //   .then((res) => setStats(res.data.data))
-    //   .catch((err) => console.error(err));
+    if (!user || !["admin", "administrador"].includes(userRole)) {
+      toast.error("No tienes permisos para acceder a esta página");
+      const roleRouteMap = {
+        paciente: "/cliente",
+        doctor: "/medico",
+      };
+      navigate(roleRouteMap[userRole] || "/", { replace: true });
+      return;
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    api
+      .get("api/admin/estadisticas")
+      .then((res) => setStats(res.data))
+      .catch((err) => {
+        console.error(err);
+        // Fallback a datos mock en caso de error
+        setStats({
+          citas_hoy: 0,
+          ingresos_mes: 0,
+          pacientes_nuevos: 0,
+          tasa_confirmacion: 0,
+          porcentajes: {
+            citas: "+0%",
+            ingresos: "+0%",
+            pacientes: "+0%",
+            tasa: "0%"
+          }
+        });
+      });
   }, []);
 
   if (!stats) {
@@ -60,12 +84,12 @@ const DashboardAdmin = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 via-pink-50 to-amber-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 transition-colors duration-300">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-indigo-950 dark:to-gray-900 transition-colors duration-300">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Contenido Principal */}
-      <main className="flex-1 flex flex-col overflow-y-auto">
+      <main className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden min-w-0">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -83,7 +107,7 @@ const DashboardAdmin = () => {
               <StatCard
                 title="Citas Hoy"
                 value={stats.citas_hoy}
-                percent="+5%"
+                percent={stats.porcentajes?.citas || "+0%"}
                 color="text-green-600"
                 icon={CalendarDays}
               />
@@ -92,7 +116,7 @@ const DashboardAdmin = () => {
               <StatCard
                 title="Ingresos del Mes"
                 value={`$${stats.ingresos_mes.toLocaleString()}`}
-                percent="+2.1%"
+                percent={stats.porcentajes?.ingresos || "+0%"}
                 color="text-green-600"
                 icon={DollarSign}
               />
@@ -101,7 +125,7 @@ const DashboardAdmin = () => {
               <StatCard
                 title="Pacientes Nuevos"
                 value={stats.pacientes_nuevos}
-                percent="+8%"
+                percent={stats.porcentajes?.pacientes || "+0%"}
                 color="text-green-600"
                 icon={UserPlus}
               />
@@ -110,8 +134,8 @@ const DashboardAdmin = () => {
               <StatCard
                 title="Tasa de Confirmación"
                 value={`${stats.tasa_confirmacion}%`}
-                percent="-1.5%"
-                color="text-red-600"
+                percent={stats.porcentajes?.tasa || "0%"}
+                color={stats.porcentajes?.tasa?.startsWith("+") ? "text-green-600" : "text-red-600"}
                 icon={CheckCircle2}
               />
             </motion.div>

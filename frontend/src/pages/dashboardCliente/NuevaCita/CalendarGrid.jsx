@@ -42,7 +42,7 @@ const CalendarGrid = ({ currentMonth, setCurrentMonth, fechaSeleccionada, setFec
       className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl p-6 rounded-2xl shadow-lg border border-gray-200/50 dark:border-slate-700/50 transition-all hover:shadow-xl"
     >
       <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-200 flex items-center gap-2">
-        <Calendar className="w-5 h-5 text-indigo-600" />
+        <Calendar className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
         2. Seleccione una Fecha
       </h2>
 

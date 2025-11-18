@@ -26,10 +26,11 @@ const AccionesRapidas = () => {
           {/* 1. Botón Primario: Agendar Nueva Cita */}
           {/* 💡 UX: Usar Link directamente y añadir icono */}
           <Link
-            to="/nueva-cita" // Asumiendo que esta es la ruta interna
+            to="/cliente/nueva-cita"
             className="flex w-full items-center justify-center rounded-lg h-12 px-5 
-                           bg-brand text-white text-base font-semibold shadow-md 
-                           hover:bg-brand-dark transition duration-150 transform hover:scale-[1.01]"
+                           bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-base font-semibold shadow-md 
+                           hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500
+                           transition duration-150 transform hover:scale-[1.01]"
           >
             {/* Reemplazar 🗓️ con tu componente de Icono (ej. <CalendarPlus className="w-5 h-5 mr-2" />) */}
             🗓️ Agendar Nueva Cita
@@ -39,15 +40,15 @@ const AccionesRapidas = () => {
           {/* 2. Botón Secundario: Cancelar Cita */}
           {/* 💡 UI/UX: Mejorar el estilo secundario, añadir borde y hover para claridad */}
           <Link
-            to="/citas/cancelar" // Asumiendo una ruta lógica para cancelar
+            to="/cliente"
             className="flex w-full items-center justify-center rounded-lg h-12 px-5 
-                           text-brand border border-brand 
+                           text-indigo-600 dark:text-indigo-400 border-2 border-indigo-600 dark:border-indigo-400
                            bg-transparent 
-                           hover:bg-brand/5 dark:hover:bg-brand/10 
+                           hover:bg-indigo-50 dark:hover:bg-indigo-900/30
                            text-base font-semibold transition duration-150"
           >
             {/* Reemplazar 🗑️ con tu componente de Icono (ej. <XCircle className="w-5 h-5 mr-2" />) */}
-            🗑️ Cancelar Cita
+            🗑️ Ver Historial
           </Link>
         </div>
       </div>

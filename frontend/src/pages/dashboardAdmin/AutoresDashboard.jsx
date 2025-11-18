@@ -20,21 +20,21 @@ const AutoresDashboard = () => {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 dark:bg-gray-800">
             <tr>
-              <th className="px-6 py-3 font-semibold">Nombre</th>
-              <th className="px-6 py-3 font-semibold">Especialidad</th>
-              <th className="px-6 py-3 font-semibold">Correo</th>
-              <th className="px-6 py-3 text-right font-semibold">Acciones</th>
+              <th className="px-6 py-3 font-semibold text-gray-900 dark:text-white">Nombre</th>
+              <th className="px-6 py-3 font-semibold text-gray-900 dark:text-white">Especialidad</th>
+              <th className="px-6 py-3 font-semibold text-gray-900 dark:text-white">Correo</th>
+              <th className="px-6 py-3 text-right font-semibold text-gray-900 dark:text-white">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {autores.map((a) => (
               <tr key={a.correo} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                <td className="px-6 py-4 font-medium">{a.nombre}</td>
-                <td className="px-6 py-4">{a.especialidad}</td>
-                <td className="px-6 py-4">{a.correo}</td>
+                <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">{a.nombre}</td>
+                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{a.especialidad}</td>
+                <td className="px-6 py-4 text-gray-700 dark:text-gray-300">{a.correo}</td>
                 <td className="px-6 py-4 text-right flex justify-end gap-3">
-                  <button className="text-blue-600 hover:text-blue-800"><Edit3 className="w-5 h-5" /></button>
-                  <button className="text-red-600 hover:text-red-800"><Trash2 className="w-5 h-5" /></button>
+                  <button className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"><Edit3 className="w-5 h-5" /></button>
+                  <button className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"><Trash2 className="w-5 h-5" /></button>
                 </td>
               </tr>
             ))}

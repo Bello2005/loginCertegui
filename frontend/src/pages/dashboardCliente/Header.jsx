@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Bell, Sparkles, UserCircle2 } from "lucide-react";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
+import DarkModeToggle from "../../components/DarkModeToggle";
 
 dayjs.locale("es");
 
@@ -37,7 +38,7 @@ const Header = () => {
         </motion.p>
       </div>
 
-      {/* Sección Derecha: Notificaciones + Perfil */}
+      {/* Sección Derecha: Notificaciones + Modo Oscuro + Perfil */}
       <div className="flex items-center gap-6">
         {/* Botón de Notificaciones */}
         <motion.button
@@ -52,6 +53,9 @@ const Header = () => {
             <span className="relative inline-flex rounded-full h-3 w-3 bg-red-600"></span>
           </span>
         </motion.button>
+
+        {/* Toggle de Modo Oscuro */}
+        <DarkModeToggle />
 
         {/* Avatar del usuario */}
         <motion.div

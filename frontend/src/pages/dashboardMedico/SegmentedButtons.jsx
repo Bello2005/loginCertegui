@@ -47,14 +47,14 @@ const SegmentedButtons = ({ initialView = "day" }) => {
   };
 
   return (
-    <div className="p-4 rounded-xl bg-gray-50 dark:bg-slate-800 shadow-md transition-all">
+    <div className="p-4 rounded-xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-gray-200/50 dark:border-slate-700/50 shadow-md transition-all">
       <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-700 rounded-xl p-1 mb-4">
         {viewOptions.map((option) => {
           const isActive = option.value === activeView;
           const buttonClasses = `
             flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 
             ${isActive
-              ? "bg-white dark:bg-slate-900 text-brand dark:text-brand-light shadow-md"
+              ? "bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-md"
               : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"}
           `;
           return (
@@ -73,30 +73,30 @@ const SegmentedButtons = ({ initialView = "day" }) => {
       </div>
 
       {/* Tabla de Citas */}
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-slate-700">
         {loading ? (
-          <p className="text-center py-6 text-gray-500">Cargando citas...</p>
+          <p className="text-center py-6 text-gray-500 dark:text-gray-400">Cargando citas...</p>
         ) : citas.length === 0 ? (
-          <p className="text-center py-6 text-gray-500">No hay citas programadas</p>
+          <p className="text-center py-6 text-gray-500 dark:text-gray-400">No hay citas programadas</p>
         ) : (
           <table className="w-full text-sm text-left border-collapse">
             <thead className="bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200">
               <tr>
-                <th className="px-4 py-2">#</th>
-                <th className="px-4 py-2">Paciente</th>
-                <th className="px-4 py-2">Doctor</th>
-                <th className="px-4 py-2">Servicio</th>
-                <th className="px-4 py-2">Fecha</th>
-                <th className="px-4 py-2">Hora</th>
-                <th className="px-4 py-2">Estado</th>
+                <th className="px-4 py-2 font-semibold">#</th>
+                <th className="px-4 py-2 font-semibold">Paciente</th>
+                <th className="px-4 py-2 font-semibold">Doctor</th>
+                <th className="px-4 py-2 font-semibold">Servicio</th>
+                <th className="px-4 py-2 font-semibold">Fecha</th>
+                <th className="px-4 py-2 font-semibold">Hora</th>
+                <th className="px-4 py-2 font-semibold">Estado</th>
               </tr>
             </thead>
             <tbody>
               {citas.map((cita, index) => (
                 <tr
                   key={cita.id}
-                  className={`border-b hover:bg-gray-100 dark:hover:bg-slate-800 ${
-                    cita.estado === "Cancelada" ? "text-red-500" : ""
+                  className={`border-b border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors ${
+                    cita.estado === "Cancelada" ? "text-red-500 dark:text-red-400" : "text-gray-800 dark:text-gray-200"
                   }`}
                 >
                   <td className="px-4 py-2">{index + 1}</td>

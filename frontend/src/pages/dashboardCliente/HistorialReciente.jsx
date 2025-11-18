@@ -41,10 +41,8 @@ const HistorialReciente = () => {
       const user = JSON.parse(localStorage.getItem("user"));
       if (!user) return;
 
-      // TODO: Actualizar endpoint al nuevo backend Node.js (ej: /api/citas/historial?usuario_id=${user.id})
-      // const { data } = await api.get(`/Cita2.php?usuario_id=${user.id}`);
-      // Temporalmente usando datos mock
-      setCitas([]);
+      const { data } = await api.get(`api/citas/historial?usuario_id=${user.id}`);
+      setCitas(data || []);
     } catch (error) {
       console.error("Error fetching citas:", error);
       setCitas([]);

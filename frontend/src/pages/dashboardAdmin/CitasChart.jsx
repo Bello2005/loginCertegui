@@ -14,25 +14,39 @@ import { api } from "../../services/api";
 
 const CitasChart = () => {
   const [data, setData] = useState([]);
+  const [isDark, setIsDark] = useState(false);
 
-  // TODO: Actualizar endpoint al nuevo backend Node.js
   useEffect(() => {
-    // Temporalmente usando datos mock hasta que se implemente el endpoint
-    setData([
-      { name: "Lun", citas: 5 },
-      { name: "Mar", citas: 8 },
-      { name: "Mié", citas: 3 },
-      { name: "Jue", citas: 6 },
-      { name: "Vie", citas: 4 },
-      { name: "Sáb", citas: 2 },
-      { name: "Dom", citas: 1 }
-    ]);
-    
-    // TODO: Reemplazar con endpoint del nuevo backend (ej: /api/admin/citas-por-dia)
-    // api
-    //   .get("citas_por_dia.php")
-    //   .then((res) => setData(res.data.data))
-    //   .catch((err) => console.error(err));
+    // Detectar modo oscuro
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    api
+      .get("api/admin/citas-por-dia")
+      .then((res) => setData(res.data.data))
+      .catch((err) => {
+        console.error(err);
+        // Fallback a datos mock
+        setData([
+          { name: "Lun", citas: 0 },
+          { name: "Mar", citas: 0 },
+          { name: "Mié", citas: 0 },
+          { name: "Jue", citas: 0 },
+          { name: "Vie", citas: 0 },
+          { name: "Sáb", citas: 0 },
+          { name: "Dom", citas: 0 }
+        ]);
+      });
   }, []);
 
   return (
@@ -49,28 +63,40 @@ const CitasChart = () => {
           Citas por Día
         </h2>
       </div>
-      <div className="h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
+      <div className="h-64 min-h-[256px] w-full">
+        {data && data.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data}>
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              stroke="currentColor" 
+              className="text-gray-300 dark:text-gray-700"
+              opacity={0.3} 
+            />
             <XAxis
               dataKey="name"
-              stroke="#6b7280"
+              stroke="currentColor"
+              className="text-gray-600 dark:text-gray-400"
               style={{ fontSize: "12px" }}
+              tick={{ fill: "currentColor" }}
             />
             <YAxis
-              stroke="#6b7280"
+              stroke="currentColor"
+              className="text-gray-600 dark:text-gray-400"
               style={{ fontSize: "12px" }}
+              tick={{ fill: "currentColor" }}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1f2937",
+                backgroundColor: isDark ? "rgb(31, 41, 55)" : "rgb(255, 255, 255)",
                 borderRadius: "12px",
-                border: "none",
-                color: "#f9fafb",
+                border: isDark ? "1px solid rgb(55, 65, 81)" : "1px solid rgb(229, 231, 235)",
+                color: isDark ? "rgb(249, 250, 251)" : "rgb(17, 24, 39)",
                 padding: "12px",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
               }}
               cursor={{ fill: "rgba(99, 102, 241, 0.1)" }}
+              labelStyle={{ color: isDark ? "rgb(249, 250, 251)" : "rgb(17, 24, 39)" }}
             />
             <Bar
               dataKey="citas"
@@ -85,6 +111,11 @@ const CitasChart = () => {
             </defs>
           </BarChart>
         </ResponsiveContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+            No hay datos disponibles
+          </div>
+        )}
       </div>
     </motion.div>
   );
