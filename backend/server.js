@@ -1758,7 +1758,7 @@ app.delete('/api/horarios/:id', (req, res) => {
 app.get('/api/notas', (req, res) => {
   try {
     const { page, limit, offset } = getPaginationParams(req);
-    const { usuario_id } = req.query;
+    const { usuario_id, paciente_id } = req.query;
     
     let query = `
       SELECT 
@@ -1772,9 +1772,20 @@ app.get('/api/notas', (req, res) => {
     `;
     
     const params = [];
+    const conditions = [];
+    
     if (usuario_id) {
-      query += ' WHERE d.usuario_id = ?';
+      conditions.push('d.usuario_id = ?');
       params.push(usuario_id);
+    }
+    
+    if (paciente_id) {
+      conditions.push('n.paciente_id = ?');
+      params.push(paciente_id);
+    }
+    
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
     }
     
     query += ' ORDER BY n.created_at DESC LIMIT ? OFFSET ?';
@@ -1783,13 +1794,35 @@ app.get('/api/notas', (req, res) => {
     const notas = db.prepare(query).all(...params);
     
     let countQuery = 'SELECT COUNT(*) as count FROM notas n';
-    if (usuario_id) {
-      countQuery += ' JOIN doctores d ON n.doctor_id = d.id WHERE d.usuario_id = ?';
-      const total = db.prepare(countQuery).get(usuario_id).count;
-      res.json({
-        data: notas,
-        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
-      });
+    if (usuario_id || paciente_id) {
+      countQuery += ' LEFT JOIN doctores d ON n.doctor_id = d.id';
+      const countConditions = [];
+      const countParams = [];
+      
+      if (usuario_id) {
+        countConditions.push('d.usuario_id = ?');
+        countParams.push(usuario_id);
+      }
+      
+      if (paciente_id) {
+        countConditions.push('n.paciente_id = ?');
+        countParams.push(paciente_id);
+      }
+      
+      if (countConditions.length > 0) {
+        countQuery += ' WHERE ' + countConditions.join(' AND ');
+        const total = db.prepare(countQuery).get(...countParams).count;
+        res.json({
+          data: notas,
+          pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+        });
+      } else {
+        const total = db.prepare('SELECT COUNT(*) as count FROM notas').get().count;
+        res.json({
+          data: notas,
+          pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
+        });
+      }
     } else {
       const total = db.prepare('SELECT COUNT(*) as count FROM notas').get().count;
       res.json({

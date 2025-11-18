@@ -16,7 +16,9 @@ export default defineConfig({
       'lucide-react',
       'react-big-calendar',
       'recharts',
-      'react-toastify'
+      'react-toastify',
+      'jspdf',
+      'jspdf-autotable'
     ],
     exclude: []
   },

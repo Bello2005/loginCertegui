@@ -1,16 +1,59 @@
 // src/components/Header.jsx
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Bell, Sparkles, UserCircle2 } from "lucide-react";
+import { Bell, Sparkles, UserCircle2, Download, FileText } from "lucide-react";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import DarkModeToggle from "../../components/DarkModeToggle";
+import { generateHistoriaClinicaPDF } from "../../utils/pdfGenerator";
+import { api } from "../../services/api";
+import { toast } from "react-toastify";
 
 dayjs.locale("es");
 
 const Header = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const today = dayjs().format("dddd, DD [de] MMMM");
+  const [generandoPDF, setGenerandoPDF] = useState(false);
+
+  const handleDownloadHistoriaClinica = async () => {
+    if (!user || !user.id) {
+      toast.error("Error: Usuario no encontrado");
+      return;
+    }
+
+    setGenerandoPDF(true);
+    try {
+      toast.info("Generando historia clínica...");
+      
+      // Obtener información completa del paciente
+      const pacienteRes = await api.get(`api/usuario/me?usuario_id=${user.id}`);
+      const pacienteData = pacienteRes.data;
+      
+      // Obtener historial completo de citas (sin límite)
+      const citasRes = await api.get(`api/citas?paciente_id=${user.id}`);
+      const citas = Array.isArray(citasRes.data) ? citasRes.data : [];
+      
+      // Obtener notas médicas del paciente
+      let notas = [];
+      try {
+        const notasRes = await api.get(`api/notas?paciente_id=${user.id}&page=1&limit=1000`);
+        notas = notasRes.data?.data || [];
+      } catch (error) {
+        console.log("No se pudieron cargar las notas médicas:", error);
+        // Continuar sin notas si no hay endpoint disponible
+      }
+      
+      // Generar PDF
+      await generateHistoriaClinicaPDF(pacienteData, citas, notas);
+      toast.success("Historia clínica generada exitosamente");
+    } catch (error) {
+      console.error("Error generando historia clínica:", error);
+      toast.error("Error al generar la historia clínica");
+    } finally {
+      setGenerandoPDF(false);
+    }
+  };
 
   return (
     <motion.header
@@ -38,8 +81,34 @@ const Header = () => {
         </motion.p>
       </div>
 
-      {/* Sección Derecha: Notificaciones + Modo Oscuro + Perfil */}
-      <div className="flex items-center gap-6">
+      {/* Sección Derecha: Descargar Historia + Notificaciones + Modo Oscuro + Perfil */}
+      <div className="flex items-center gap-4">
+        {/* Botón de Descargar Historia Clínica */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleDownloadHistoriaClinica}
+          disabled={generandoPDF}
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {generandoPDF ? (
+            <>
+              <motion.div
+                className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <span className="text-sm font-semibold">Generando...</span>
+            </>
+          ) : (
+            <>
+              <Download className="w-4 h-4" />
+              <FileText className="w-4 h-4" />
+              <span className="text-sm font-semibold">Historia Clínica</span>
+            </>
+          )}
+        </motion.button>
+
         {/* Botón de Notificaciones */}
         <motion.button
           whileHover={{ scale: 1.1 }}

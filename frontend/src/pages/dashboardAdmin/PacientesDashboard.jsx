@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { api } from "../../services/api";
-import { UserPlus, ChevronLeft, ChevronRight } from "lucide-react";
+import { UserPlus, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import HeaderDashboard from "./HeaderDashboard";
 import PacienteModal from "./PacienteModal";
+import { generatePacientesPDF } from "../../utils/pdfGenerator";
+import { toast } from "react-toastify";
 
 const Pages = () => {
   const [pacientes, setPacientes] = useState([]);
@@ -37,6 +39,20 @@ const Pages = () => {
     fetchPacientes(pagination.page);
   };
 
+  const handleDownloadPDF = async () => {
+    try {
+      toast.info("Generando PDF...");
+      // Obtener todos los pacientes (sin paginación)
+      const res = await api.get(`api/pacientes?page=1&limit=1000`);
+      const allPacientes = res.data.data || pacientes;
+      generatePacientesPDF(allPacientes);
+      toast.success("PDF generado exitosamente");
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+      toast.error("Error al generar el PDF");
+    }
+  };
+
   return (
     <>
       <div className="p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg transition hover:shadow-xl">
@@ -44,12 +60,20 @@ const Pages = () => {
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
             Pacientes
           </h2>
-          <button 
-            onClick={() => setModalOpen(true)} 
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg transition-all"
-          >
-            <UserPlus className="w-5 h-5" /> Nuevo Paciente
-          </button>
+          <div className="flex gap-3">
+            <button 
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-lg transition-all"
+            >
+              <Download className="w-5 h-5" /> Descargar PDF
+            </button>
+            <button 
+              onClick={() => setModalOpen(true)} 
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg transition-all"
+            >
+              <UserPlus className="w-5 h-5" /> Nuevo Paciente
+            </button>
+          </div>
         </div>
 
       {cargando ? (

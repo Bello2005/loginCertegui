@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { CalendarDays, Eye } from "lucide-react";
+import { CalendarDays, Eye, Download } from "lucide-react";
 import { api } from "../../services/api";
 import CitaModal from "../../components/CitaModal";
+import { generateCitasPDF } from "../../utils/pdfGenerator";
+import { toast } from "react-toastify";
 
 const TablaProximasCitas = () => {
   const [citas, setCitas] = useState([]);
@@ -34,15 +36,34 @@ const TablaProximasCitas = () => {
     fetchCitas();
   }, []);
 
+  const handleDownloadPDF = () => {
+    try {
+      toast.info("Generando PDF...");
+      generateCitasPDF(citas);
+      toast.success("PDF generado exitosamente");
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+      toast.error("Error al generar el PDF");
+    }
+  };
+
   return (
     <div className="rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl p-6 border border-white/20 dark:border-gray-700/50 shadow-lg">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md">
-          <CalendarDays className="w-5 h-5" />
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-md">
+            <CalendarDays className="w-5 h-5" />
+          </div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
+            Próximas Citas
+          </h2>
         </div>
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-pink-600 bg-clip-text text-transparent">
-          Próximas Citas
-        </h2>
+        <button 
+          onClick={handleDownloadPDF}
+          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-lg transition-all"
+        >
+          <Download className="w-5 h-5" /> Descargar PDF
+        </button>
       </div>
 
       <div className="overflow-x-auto">

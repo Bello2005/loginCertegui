@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UserPlus, Edit3, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { UserPlus, Edit3, Trash2, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import HeaderDashboard from "./HeaderDashboard";
@@ -7,6 +7,7 @@ import { api } from "../../services/api";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import { generateTratamientosPDF } from "../../utils/pdfGenerator";
 
 const TratamientosModal = ({ isOpen, onClose, tratamiento = null, onSave }) => {
   const [formData, setFormData] = useState({
@@ -233,6 +234,19 @@ const TratamientosDashboard = () => {
     }
   };
 
+  const handleDownloadPDF = async () => {
+    try {
+      toast.info("Generando PDF...");
+      const res = await api.get(`api/tratamientos?page=1&limit=1000`);
+      const allTratamientos = res.data.data || tratamientos;
+      generateTratamientosPDF(allTratamientos);
+      toast.success("PDF generado exitosamente");
+    } catch (error) {
+      console.error("Error generando PDF:", error);
+      toast.error("Error al generar el PDF");
+    }
+  };
+
   useEffect(() => { fetchTratamientos(); }, []);
 
   return (
@@ -246,12 +260,20 @@ const TratamientosDashboard = () => {
           <div className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Tratamientos</h2>
-              <button 
-                onClick={() => handleOpenModal()} 
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg transition-all"
-              >
-                <UserPlus className="w-5 h-5" /> Nuevo Tratamiento
-              </button>
+              <div className="flex gap-3">
+                <button 
+                  onClick={handleDownloadPDF}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl shadow-lg transition-all"
+                >
+                  <Download className="w-5 h-5" /> Descargar PDF
+                </button>
+                <button 
+                  onClick={() => handleOpenModal()} 
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg transition-all"
+                >
+                  <UserPlus className="w-5 h-5" /> Nuevo Tratamiento
+                </button>
+              </div>
             </div>
 
             {loading ? (
